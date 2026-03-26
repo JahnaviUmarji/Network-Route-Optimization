@@ -14,9 +14,9 @@ A Django REST Framework API for computing optimal network routes using Dijkstra'
 
 ## Tech Stack
 
-- **Framework**: Django 6.0 + Django REST Framework
+- **Framework**: Django 5.0 + Django REST Framework
 - **Database**: SQLite (persistent)
-- **Python**: 3.13+
+- **Python**: 3.8+
 - **Testing**: Django TestCase with APIClient integration tests
 
 ## Project Structure
@@ -131,7 +131,7 @@ curl "http://localhost:9000/api/routes/history/?source=ServerA&destination=Serve
 
 ### 1. Navigate to project directory
 ```bash
-cd "/Users/jahnaviumarji/Documents/Network Route Optimization/network_opt"
+cd "Network-Route-Optimization/network_opt"
 ```
 
 ### 2. Create and activate virtual environment (optional but recommended)
@@ -147,12 +147,12 @@ pip install django djangorestframework
 
 ### 4. Apply migrations
 ```bash
-python3 manage.py migrate
+python manage.py migrate
 ```
 
 ### 5. Run the development server
 ```bash
-python3 manage.py runserver 9000
+python manage.py runserver 9000
 ```
 
 The API will be available at `http://localhost:9000/api/`
@@ -161,20 +161,20 @@ The API will be available at `http://localhost:9000/api/`
 
 Run the complete test suite (31 tests):
 ```bash
-python3 manage.py test routing.tests
+python manage.py test routing.tests
 ```
 
 Run specific test file:
 ```bash
-python3 manage.py test routing.tests.test_nodes
-python3 manage.py test routing.tests.test_edges
-python3 manage.py test routing.tests.test_routes
-python3 manage.py test routing.tests.test_history
+python manage.py test routing.tests.test_nodes
+python manage.py test routing.tests.test_edges
+python manage.py test routing.tests.test_routes
+python manage.py test routing.tests.test_history
 ```
 
 Run specific test:
 ```bash
-python3 manage.py test routing.tests.test_nodes.NodeAPITestCase.test_create_node_success
+python manage.py test routing.tests.test_nodes.NodeAPITestCase.test_create_node_success
 ```
 
 **Test Results**: 31/31 passing ✅
@@ -352,11 +352,3 @@ Then update the view to pass the new parameter and update API tests.
 - [ ] Add WebSocket support for real-time route updates
 - [ ] Create admin UI for network topology visualization
 - [ ] Add prometheus metrics for monitoring
-
-## License
-
-This project is provided as-is for educational and development purposes.
-
-## Support
-
-For issues or questions, refer to the test suite in `routing/tests/` for usage examples and expected behavior.

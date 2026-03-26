@@ -1,0 +1,388 @@
+### Base URL: http://localhost:9000/api
+
+### ===== CREATE NODES =====
+
+### Core Infrastructure Nodes
+POST http://localhost:9000/api/nodes/
+Content-Type: application/json
+
+{
+  "name": "Gateway"
+}
+
+###
+POST http://localhost:9000/api/nodes/
+Content-Type: application/json
+
+{
+  "name": "Router_A"
+}
+
+###
+POST http://localhost:9000/api/nodes/
+Content-Type: application/json
+
+{
+  "name": "Router_B"
+}
+
+###
+POST http://localhost:9000/api/nodes/
+Content-Type: application/json
+
+{
+  "name": "Router_C"
+}
+
+###
+POST http://localhost:9000/api/nodes/
+Content-Type: application/json
+
+{
+  "name": "Switch_1"
+}
+
+###
+POST http://localhost:9000/api/nodes/
+Content-Type: application/json
+
+{
+  "name": "Switch_2"
+}
+
+###
+POST http://localhost:9000/api/nodes/
+Content-Type: application/json
+
+{
+  "name": "Server_X"
+}
+
+###
+POST http://localhost:9000/api/nodes/
+Content-Type: application/json
+
+{
+  "name": "Server_Y"
+}
+
+###
+POST http://localhost:9000/api/nodes/
+Content-Type: application/json
+
+{
+  "name": "Database"
+}
+
+### ===== CREATE EDGES =====
+
+### Primary Flow: Gateway -> Routers
+POST http://localhost:9000/api/edges/
+Content-Type: application/json
+
+{
+  "source": "Gateway",
+  "destination": "Router_A",
+  "latency": 5.0
+}
+
+###
+POST http://localhost:9000/api/edges/
+Content-Type: application/json
+
+{
+  "source": "Gateway",
+  "destination": "Router_B",
+  "latency": 8.0
+}
+
+### Router Interconnections
+POST http://localhost:9000/api/edges/
+Content-Type: application/json
+
+{
+  "source": "Router_A",
+  "destination": "Router_B",
+  "latency": 3.0
+}
+
+###
+POST http://localhost:9000/api/edges/
+Content-Type: application/json
+
+{
+  "source": "Router_A",
+  "destination": "Router_C",
+  "latency": 6.0
+}
+
+###
+POST http://localhost:9000/api/edges/
+Content-Type: application/json
+
+{
+  "source": "Router_B",
+  "destination": "Router_C",
+  "latency": 4.0
+}
+
+### Router to Switch Connections
+POST http://localhost:9000/api/edges/
+Content-Type: application/json
+
+{
+  "source": "Router_A",
+  "destination": "Switch_1",
+  "latency": 2.0
+}
+
+###
+POST http://localhost:9000/api/edges/
+Content-Type: application/json
+
+{
+  "source": "Router_B",
+  "destination": "Switch_2",
+  "latency": 2.5
+}
+
+###
+POST http://localhost:9000/api/edges/
+Content-Type: application/json
+
+{
+  "source": "Router_C",
+  "destination": "Switch_1",
+  "latency": 3.0
+}
+
+###
+POST http://localhost:9000/api/edges/
+Content-Type: application/json
+
+{
+  "source": "Router_C",
+  "destination": "Switch_2",
+  "latency": 2.0
+}
+
+### Switch to Server Connections
+POST http://localhost:9000/api/edges/
+Content-Type: application/json
+
+{
+  "source": "Switch_1",
+  "destination": "Server_X",
+  "latency": 1.0
+}
+
+###
+POST http://localhost:9000/api/edges/
+Content-Type: application/json
+
+{
+  "source": "Switch_1",
+  "destination": "Database",
+  "latency": 1.5
+}
+
+###
+POST http://localhost:9000/api/edges/
+Content-Type: application/json
+
+{
+  "source": "Switch_2",
+  "destination": "Server_Y",
+  "latency": 1.0
+}
+
+###
+POST http://localhost:9000/api/edges/
+Content-Type: application/json
+
+{
+  "source": "Switch_2",
+  "destination": "Database",
+  "latency": 2.0
+}
+
+### Alternative Paths
+POST http://localhost:9000/api/edges/
+Content-Type: application/json
+
+{
+  "source": "Gateway",
+  "destination": "Router_C",
+  "latency": 12.0
+}
+
+###
+POST http://localhost:9000/api/edges/
+Content-Type: application/json
+
+{
+  "source": "Server_X",
+  "destination": "Server_Y",
+  "latency": 4.0
+}
+
+### ===== SHORTEST PATH TESTS =====
+
+### Test 1: Simple Direct Path
+### Expected: Gateway -> Router_A (total: 5.0)
+POST http://localhost:9000/api/routes/shortest/
+Content-Type: application/json
+
+{
+  "source": "Gateway",
+  "destination": "Router_A"
+}
+
+### Test 2: Two-Hop Path
+### Expected: Gateway -> Router_A -> Router_B (total: 8.0)
+POST http://localhost:9000/api/routes/shortest/
+Content-Type: application/json
+
+{
+  "source": "Gateway",
+  "destination": "Router_B"
+}
+
+### Test 3: Three-Hop Path
+### Expected: Gateway -> Router_A -> Router_C (total: 11.0)
+POST http://localhost:9000/api/routes/shortest/
+Content-Type: application/json
+
+{
+  "source": "Gateway",
+  "destination": "Router_C"
+}
+
+### Test 4: Path to Switch
+### Expected: Gateway -> Router_A -> Switch_1 (total: 7.0)
+POST http://localhost:9000/api/routes/shortest/
+Content-Type: application/json
+
+{
+  "source": "Gateway",
+  "destination": "Switch_1"
+}
+
+### Test 5: Path to Server
+### Expected: Gateway -> Router_A -> Switch_1 -> Server_X (total: 8.0)
+POST http://localhost:9000/api/routes/shortest/
+Content-Type: application/json
+
+{
+  "source": "Gateway",
+  "destination": "Server_X"
+}
+
+### Test 6: Path to Database (Multiple Options)
+### Expected: Gateway -> Router_A -> Switch_1 -> Database (total: 8.5)
+### Alternative: Gateway -> Router_B -> Switch_2 -> Database (total: 12.5)
+POST http://localhost:9000/api/routes/shortest/
+Content-Type: application/json
+
+{
+  "source": "Gateway",
+  "destination": "Database"
+}
+
+### Test 7: Router to Router Path
+### Expected: Router_A -> Router_B (total: 3.0)
+POST http://localhost:9000/api/routes/shortest/
+Content-Type: application/json
+
+{
+  "source": "Router_A",
+  "destination": "Router_B"
+}
+
+### Test 8: Router to Server Path
+### Expected: Router_B -> Switch_2 -> Server_Y (total: 3.5)
+POST http://localhost:9000/api/routes/shortest/
+Content-Type: application/json
+
+{
+  "source": "Router_B",
+  "destination": "Server_Y"
+}
+
+### Test 9: Server to Server Path
+### Expected: Server_X -> Server_Y (total: 4.0)
+POST http://localhost:9000/api/routes/shortest/
+Content-Type: application/json
+
+{
+  "source": "Server_X",
+  "destination": "Server_Y"
+}
+
+### Test 10: Complex Multi-Hop Path
+### Expected: Router_A -> Router_C -> Switch_2 -> Server_Y (total: 11.0)
+POST http://localhost:9000/api/routes/shortest/
+Content-Type: application/json
+
+{
+  "source": "Router_A",
+  "destination": "Server_Y"
+}
+
+### Test 11: Alternative Path Comparison
+### Expected: Gateway -> Router_A -> Router_C (total: 11.0)
+### Alternative: Gateway -> Router_C (total: 12.0) - should choose shorter path
+POST http://localhost:9000/api/routes/shortest/
+Content-Type: application/json
+
+{
+  "source": "Gateway",
+  "destination": "Router_C"
+}
+
+### Test 12: Switch to Database Path
+### Expected: Switch_1 -> Database (total: 1.5)
+POST http://localhost:9000/api/routes/shortest/
+Content-Type: application/json
+
+{
+  "source": "Switch_1",
+  "destination": "Database"
+}
+
+
+### ===== NETWORK ANALYSIS =====
+
+### View All Nodes
+GET http://localhost:9000/api/nodes/
+
+### View All Edges
+GET http://localhost:9000/api/edges/
+
+### View Route History
+GET http://localhost:9000/api/routes/history/
+
+### ===== PATH ANALYSIS SUMMARY =====
+###
+### Network Topology (Unidirectional):
+### Gateway -> Router_A (5.0), Router_B (8.0), Router_C (12.0)
+### Router_A -> Router_B (3.0), Router_C (6.0), Switch_1 (2.0)
+### Router_B -> Router_C (4.0), Switch_2 (2.5)
+### Router_C -> Switch_1 (3.0), Switch_2 (2.0)
+### Switch_1 -> Server_X (1.0), Database (1.5)
+### Switch_2 -> Server_Y (1.0), Database (2.0)
+### Server_X -> Server_Y (4.0)
+###
+### Expected Shortest Paths:
+### 1. Gateway -> Router_A: 5.0
+### 2. Gateway -> Router_B: 8.0 (via Gateway -> Router_A -> Router_B)
+### 3. Gateway -> Router_C: 11.0 (via Gateway -> Router_A -> Router_C)
+### 4. Gateway -> Switch_1: 7.0 (via Gateway -> Router_A -> Switch_1)
+### 5. Gateway -> Server_X: 8.0 (via Gateway -> Router_A -> Switch_1 -> Server_X)
+### 6. Gateway -> Database: 8.5 (via Gateway -> Router_A -> Switch_1 -> Database)
+### 7. Router_A -> Router_B: 3.0
+### 8. Router_B -> Server_Y: 3.5 (via Router_B -> Switch_2 -> Server_Y)
+### 9. Server_X -> Server_Y: 4.0
+### 10. Router_A -> Server_Y: 11.0 (via Router_A -> Router_C -> Switch_2 -> Server_Y)
+### 11. Gateway -> Router_C: 11.0 (shorter than direct 12.0)
+### 12. Switch_1 -> Database: 1.5
