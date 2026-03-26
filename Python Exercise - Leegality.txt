@@ -1,0 +1,176 @@
+﻿# 📌 API Design for Network Route Optimization
+
+
+## 1️⃣ Add Node
+
+
+**POST** `/nodes`
+
+
+**Request Body:**
+
+
+```json
+{
+  "name": "ServerA"
+}
+```
+
+
+**Response (201 Created):**
+
+
+```json
+{
+  "id": 1,
+  "name": "ServerA"
+}
+```
+
+
+**Errors:**
+
+
+* 400: Name missing or duplicate
+
+
+---
+
+
+## 2️⃣ Add Edge
+
+
+**POST** `/edges`
+
+
+**Request Body:**
+
+
+```json
+{
+  "source": "ServerA",
+  "destination": "ServerB",
+  "latency": 12.5
+}
+```
+
+
+**Response (201 Created):**
+
+
+```json
+{
+  "id": 1,
+  "source": "ServerA",
+  "destination": "ServerB",
+  "latency": 12.5
+}
+```
+
+
+**Errors:**
+
+
+* 400: Source/destination missing, latency ≤ 0, duplicate edge, nodes not found
+
+
+---
+
+
+## 3️⃣ Get Shortest Route
+
+
+**POST** `/routes/shortest`
+
+
+**Request Body:**
+
+
+```json
+{
+  "source": "ServerA",
+  "destination": "ServerD"
+}
+```
+
+
+**Response (200 OK, Path Exists):**
+
+
+```json
+{
+  "total_latency": 23.4,
+  "path": ["ServerA", "ServerB", "ServerD"]
+}
+```
+
+
+**Response (404 Not Found, No Path):**
+
+
+```json
+{
+  "error": "No path exists between ServerA and ServerD"
+}
+```
+
+
+**Errors:**
+
+
+* 400: Invalid or non-existent nodes
+
+
+---
+
+
+## 4️⃣ Get Route Query History
+
+
+**GET** `/routes/history`
+
+
+**Query Parameters (optional):**
+
+
+* `source` – filter by source node
+* `destination` – filter by destination node
+* `limit` – number of records
+* `date_from` / `date_to` – filter by timestamp
+
+
+**Response (200 OK):**
+
+
+```json
+[
+  {
+    "id": 1,
+    "source": "ServerA",
+    "destination": "ServerD",
+    "total_latency": 23.4,
+    "path": ["ServerA", "ServerB", "ServerD"],
+    "created_at": "2026-02-20T14:32:00Z"
+  },
+  {
+    "id": 2,
+    "source": "ServerB",
+    "destination": "ServerC",
+    "total_latency": 10.1,
+    "path": ["ServerB", "ServerC"],
+    "created_at": "2026-02-20T15:10:00Z"
+  }
+]
+```
+
+
+---
+
+
+## Optional (Nice-to-Have APIs)
+
+
+* **GET** `/nodes` → List all nodes
+* **GET** `/edges` → List all edges
+* **DELETE** `/nodes/{id}` → Delete node
+* **DELETE** `/edges/{id}` → Delete edge
